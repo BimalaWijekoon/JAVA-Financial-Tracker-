@@ -1,0 +1,520 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package financialtracker;
+
+import java.awt.Image;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+/**
+ *
+ * @author GAGANI WADUWADENIYA
+ */
+public class profile extends javax.swing.JFrame {
+
+    /**
+     * Creates new form profile
+     */
+    private final String accountNumber;
+    byte[] profilePictureBytes = null; // Update this line to get the profile picture bytes
+    
+    public profile(String accountNumber) {
+        initComponents();
+        this.accountNumber = accountNumber;
+    }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    private boolean updateDataIntoLoginTable() {
+    try {
+        // Get the edited details from the text fields
+        String name = NameEdit.getText();
+        String email = EmailEdit.getText();
+        String contact = ContactEdit.getText();
+        String address = AddressEdit.getText();
+        String city = CityEdit.getText();
+        String occupation = OccupationEdit.getText();
+
+        // Convert profile picture byte array to Blob
+        Blob propicBlob = null;
+        if (profilePictureBytes != null) {
+            propicBlob = new SerialBlob(profilePictureBytes);
+        }
+
+        Connection con = new DataBase().getConnection();
+        StringBuilder queryBuilder = new StringBuilder("UPDATE login SET ");
+        List<Object> params = new ArrayList<>();
+        if (!name.isEmpty()) {
+            queryBuilder.append("Name=?, ");
+            params.add(name);
+        }
+        if (!email.isEmpty()&& isValidEmail(email)) {
+            queryBuilder.append("Email_Address=?, ");
+            params.add(email);
+        }
+        if (!address.isEmpty()) {
+            queryBuilder.append("Address=?, ");
+            params.add(address);
+        }
+        if (!city.isEmpty()) {
+            queryBuilder.append("City=?, ");
+            params.add(city);
+        }
+        if (!contact.isEmpty() &&  isValidContactNumber(contact)) {
+            queryBuilder.append("Contact_Number=?, ");
+            params.add(contact);
+        }
+        if (!occupation.isEmpty()) {
+            queryBuilder.append("Occupation=?, ");
+            params.add(occupation);
+        }
+        if (propicBlob != null) {
+            queryBuilder.append("propic=?, ");
+            params.add(propicBlob);
+        }
+        
+        // Remove the last comma and space from the query
+        queryBuilder.delete(queryBuilder.length() - 2, queryBuilder.length());
+        
+        // Add WHERE clause
+        queryBuilder.append(" WHERE Acc_Number=?");
+        params.add(accountNumber);
+
+        // Prepare the statement
+        PreparedStatement pstmt = con.prepareStatement(queryBuilder.toString());
+        
+        // Set parameters
+        for (int i = 0; i < params.size(); i++) {
+            pstmt.setObject(i + 1, params.get(i));
+        }
+
+        // Execute update
+        pstmt.executeUpdate();
+        
+        // Close resources
+        new DataBase().closeConnection(con);
+        
+        return true;
+    } catch (SQLException ex) {
+        // Display error message
+        JOptionPane.showMessageDialog(this, "Error updating user profile.", "Error", JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace(); // Log the exception for debugging
+        return false;
+    }
+}
+
+private boolean isValidEmail(String email) {
+    // Regular expression pattern for email validation
+    String emailPattern = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
+    return Pattern.matches(emailPattern, email);
+}
+
+private boolean isValidContactNumber(String contactNumber) {
+    // Regular expression pattern for contact number validation (only digits allowed)
+    return Pattern.matches("\\d+", contactNumber);
+}  
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel3 = new javax.swing.JLabel();
+        jTextField9 = new javax.swing.JTextField();
+        jTextField11 = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        NameEdit = new javax.swing.JTextField();
+        ContactEdit = new javax.swing.JTextField();
+        EmailEdit = new javax.swing.JTextField();
+        OccupationEdit = new javax.swing.JTextField();
+        CityEdit = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        AddressEdit = new javax.swing.JTextArea();
+        update = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        dashboardreturn = new javax.swing.JButton();
+        propic = new javax.swing.JLabel();
+        changebtn = new javax.swing.JButton();
+
+        jLabel3.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel3.setFont(new java.awt.Font("Rockwell", 3, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(165, 165, 165));
+        jLabel3.setText("NAME :");
+
+        jTextField9.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+
+        jTextField11.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(7, 7, 77));
+
+        jLabel1.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel1.setFont(new java.awt.Font("Rockwell", 3, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(191, 191, 191));
+        jLabel1.setText("NAME :");
+
+        jLabel2.setFont(new java.awt.Font("Serif", 3, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(191, 191, 191));
+        jLabel2.setText("UPDATE PROFILE DETAILS");
+
+        jLabel4.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel4.setFont(new java.awt.Font("Rockwell", 3, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(191, 191, 191));
+        jLabel4.setText("EMAIL ADDRESS :");
+
+        jLabel5.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel5.setFont(new java.awt.Font("Rockwell", 3, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(191, 191, 191));
+        jLabel5.setText("ADDRESS :");
+
+        jLabel7.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel7.setFont(new java.awt.Font("Rockwell", 3, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(191, 191, 191));
+        jLabel7.setText("CITY :");
+
+        jLabel8.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel8.setFont(new java.awt.Font("Rockwell", 3, 18)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(191, 191, 191));
+        jLabel8.setText("CONTACT NUMBER :");
+
+        jLabel10.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel10.setFont(new java.awt.Font("Rockwell", 3, 18)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(191, 191, 191));
+        jLabel10.setText("OCCUPATION :");
+
+        NameEdit.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+
+        ContactEdit.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+
+        EmailEdit.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+
+        OccupationEdit.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+
+        CityEdit.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        CityEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CityEditActionPerformed(evt);
+            }
+        });
+
+        AddressEdit.setColumns(20);
+        AddressEdit.setFont(new java.awt.Font("Yu Gothic", 1, 14)); // NOI18N
+        AddressEdit.setRows(5);
+        jScrollPane1.setViewportView(AddressEdit);
+
+        update.setBackground(new java.awt.Color(255, 255, 255));
+        update.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        update.setForeground(new java.awt.Color(102, 102, 102));
+        update.setText("UPDATE PROFILE");
+        update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financialtracker/details.jpg"))); // NOI18N
+        jLabel9.setText("jLabel9");
+
+        jSeparator1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        dashboardreturn.setBackground(new java.awt.Color(255, 0, 0));
+        dashboardreturn.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        dashboardreturn.setForeground(new java.awt.Color(255, 255, 255));
+        dashboardreturn.setText("GO BACK");
+        dashboardreturn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dashboardreturnActionPerformed(evt);
+            }
+        });
+
+        propic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/financialtracker/user.jpg"))); // NOI18N
+
+        changebtn.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        changebtn.setForeground(new java.awt.Color(104, 104, 104));
+        changebtn.setText("CHOOSE");
+        changebtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changebtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(354, 354, 354)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 1108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(update)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dashboardreturn))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(281, 281, 281)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(CityEdit)
+                                    .addComponent(ContactEdit)
+                                    .addComponent(OccupationEdit)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(49, 49, 49)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(propic)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(changebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel8)
+                                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel10)
+                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel5))
+                                        .addGap(42, 42, 42)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(EmailEdit, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jScrollPane1)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(NameEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, Short.MAX_VALUE)))))))))
+                .addGap(980, 980, 980))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addGap(1, 1, 1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(26, 26, 26)
+                                .addComponent(jLabel9))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(changebtn)
+                                    .addComponent(propic))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(177, 210, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(NameEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(EmailEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CityEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(ContactEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(OccupationEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel10))
+                        .addGap(61, 61, 61)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dashboardreturn)
+                            .addComponent(update))))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1130, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
+
+            if (updateDataIntoLoginTable()) {
+                // If insertion is successful, navigate to login screen
+                JOptionPane.showMessageDialog(this, "Account updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                // If insertion fails, display error message
+                JOptionPane.showMessageDialog(this, "Error while updating account. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+    }//GEN-LAST:event_updateActionPerformed
+
+  
+
+
+    private void CityEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CityEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CityEditActionPerformed
+
+    private void dashboardreturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardreturnActionPerformed
+        this.hide();
+        new ProfileSettings(accountNumber).setVisible(true);
+    }//GEN-LAST:event_dashboardreturnActionPerformed
+
+    private void changebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changebtnActionPerformed
+            // Create a file chooser
+    JFileChooser fileChooser = new JFileChooser();
+    
+    // Set file chooser to accept only image files
+    fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
+    
+    // Show the file chooser dialog
+    int result = fileChooser.showOpenDialog(this);
+    
+    // If a file is chosen
+    if (result == JFileChooser.APPROVE_OPTION) {
+        // Get the selected file
+        File selectedFile = fileChooser.getSelectedFile();
+        
+        try {
+            // Read the selected file into a byte array
+            FileInputStream fis = new FileInputStream(selectedFile);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum);
+            }
+            profilePictureBytes = bos.toByteArray();
+            
+            // Resize the image to fit the label dimensions while maintaining aspect ratio
+            ImageIcon imageIcon = new ImageIcon(selectedFile.getPath());
+            Image img = imageIcon.getImage();
+            Image scaledImg = img.getScaledInstance(propic.getWidth(), propic.getHeight(), Image.SCALE_SMOOTH);
+            ImageIcon scaledIcon = new ImageIcon(scaledImg);
+            propic.setIcon(scaledIcon);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    }//GEN-LAST:event_changebtnActionPerformed
+
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(profile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new profile("accountNumber").setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea AddressEdit;
+    private javax.swing.JTextField CityEdit;
+    private javax.swing.JTextField ContactEdit;
+    private javax.swing.JTextField EmailEdit;
+    private javax.swing.JTextField NameEdit;
+    private javax.swing.JTextField OccupationEdit;
+    private javax.swing.JButton changebtn;
+    private javax.swing.JButton dashboardreturn;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextField jTextField11;
+    private javax.swing.JTextField jTextField9;
+    private javax.swing.JLabel propic;
+    private javax.swing.JButton update;
+    // End of variables declaration//GEN-END:variables
+}
