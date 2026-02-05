@@ -171,7 +171,7 @@ The application includes a rich graphical user interface with various screens fo
 
 ## 👨‍💻 Author
 
-- **Bimala Wijekoon** (@bmwmi)
+- **Bimala Wijekoon** ([@BimalaWijekoon](https://github.com/BimalaWijekoon))
 
 ## 📝 License
 
